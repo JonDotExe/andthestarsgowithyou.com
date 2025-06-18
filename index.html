@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>And The Stars Go With You</title>
   <style>
-    /* reset any default margins/padding and force full‐height */
     html, body {
       margin: 0;
       padding: 0;
@@ -13,17 +12,16 @@
       height: 100%;
     }
 
-    /* make the image exactly the size of the viewport */
     img {
       display: block;
       width: 100vw;
       height: 100vh;
-      object-fit: cover;  /* fills without distortion, cropping if needed */
-      object-position: center;
+      object-fit: cover;        /* fill the viewport */
+      object-position: top;     /* anchor to the top edge */
     }
   </style>
 </head>
 <body>
-  <img src="tau.4.webp" alt="And The Stars Go With You" />
+  <img src="tau.4.webp" alt="And The Stars Go With You">
 </body>
 </html>
