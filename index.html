@@ -2,27 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- ensure the viewport matches device width on mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>And The Stars Go With You</title>
   <style>
-    /* reset and black background */
+    /* 1) Remove all default page gutters, force black background */
     html, body {
       margin: 0;
       padding: 0;
       background: black;
-      width: 100%;
-      overflow-x: hidden;  /* prevent horizontal scroll */
+      overflow-x: hidden;   /* just in case */
     }
 
-    /* image fills its container’s width but never exceeds it */
+    /* 2) Fluid image: width spans container, height scales */
     img {
       display: block;
-      width: 100%;      /* fluid width */
-      max-width: 100%;  /* never overflow container */
-      height: auto;     /* preserve aspect ratio */
-      object-position: top;  /* anchor to the top */
-      object-fit: none;      /* no cropping or stretching */
+      width: 100%;    /* exactly the container’s width */
+      height: auto;   /* preserve aspect ratio, allow vertical scroll */
+      max-width: 100%;/* guard against over-sizing */
     }
   </style>
 </head>
