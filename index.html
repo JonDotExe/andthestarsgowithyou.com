@@ -23,6 +23,19 @@
       max-width: 100%;
     }
     
+    /* Instructions in upper left */
+    .instructions {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-style: italic;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      z-index: 100;
+      text-transform: lowercase;
+    }
+    
     /* Credit text in bottom right */
     .credit {
       position: fixed;
@@ -33,6 +46,76 @@
       font-family: Arial, sans-serif;
       font-size: 12px;
       z-index: 100;
+    }
+    
+    /* Audio controls at bottom */
+    .audio-controls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 300;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .audio-controls button {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 3px;
+      transition: color 0.2s ease;
+    }
+    
+    .audio-controls button:hover {
+      color: white;
+    }
+    
+    .scrubber {
+      flex: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .scrubber-progress {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.1s ease;
+    }
+    
+    .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .volume-slider {
+      width: 80px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .volume-progress {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 2px;
+      width: 70%;
     }
     
     /* Play/Pause icon overlay */
@@ -77,13 +160,36 @@
   <!-- Play/Pause feedback icon -->
   <div class="play-pause-icon" id="playPauseIcon">⏸️</div>
   
+  <!-- Instructions -->
+  <div class="instructions">space bar... to play 🛰️🎶</div>
+  
   <!-- Credit -->
   <div class="credit">inspired by jonn serrie</div>
+  
+  <!-- Audio Controls -->
+  <div class="audio-controls">
+    <button id="playPauseBtn">⏸️</button>
+    <div class="scrubber" id="scrubber">
+      <div class="scrubber-progress" id="scrubberProgress"></div>
+    </div>
+    <div class="volume-control">
+      <span style="color: rgba(255, 255, 255, 0.6); font-size: 14px;">🔊</span>
+      <div class="volume-slider" id="volumeSlider">
+        <div class="volume-progress" id="volumeProgress"></div>
+      </div>
+    </div>
+  </div>
 
   <script>
     let isPlaying = true;
+    let currentVolume = 0.7;
     const icon = document.getElementById('playPauseIcon');
     const iframe = document.getElementById('youtube-player');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const scrubber = document.getElementById('scrubber');
+    const scrubberProgress = document.getElementById('scrubberProgress');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumeProgress = document.getElementById('volumeProgress');
     
     // Show icon briefly on load
     setTimeout(() => {
@@ -93,17 +199,18 @@
       }, 1000);
     }, 1000);
     
-    // Click anywhere to toggle play/pause
-    document.body.addEventListener('click', function() {
+    function togglePlayPause() {
       if (isPlaying) {
         // Pause by removing src
         iframe.src = '';
         icon.innerHTML = '▶️';
+        playPauseBtn.innerHTML = '▶️';
         isPlaying = false;
       } else {
         // Play by restoring src
         iframe.src = 'https://www.youtube.com/embed/S4rtNdt5ZNY?autoplay=1&loop=1&playlist=S4rtNdt5ZNY&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&mute=0&volume=100';
         icon.innerHTML = '⏸️';
+        playPauseBtn.innerHTML = '⏸️';
         isPlaying = true;
       }
       
@@ -112,6 +219,50 @@
       setTimeout(() => {
         icon.classList.remove('show');
       }, 1000);
+    }
+    
+    // Click anywhere to toggle play/pause (except controls)
+    document.body.addEventListener('click', function(e) {
+      if (!e.target.closest('.audio-controls')) {
+        togglePlayPause();
+      }
+    });
+    
+    // Spacebar to toggle
+    document.addEventListener('keydown', function(e) {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayPause();
+      }
+    });
+    
+    // Play/pause button
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    
+    // Volume control
+    volumeSlider.addEventListener('click', function(e) {
+      const rect = volumeSlider.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      currentVolume = Math.max(0, Math.min(1, percent));
+      volumeProgress.style.width = (currentVolume * 100) + '%';
+      // Note: YouTube iframe API would be needed for actual volume control
+    });
+    
+    // Simulate scrubber progress (since we can't get real progress from YouTube iframe)
+    let scrubberPosition = 0;
+    setInterval(() => {
+      if (isPlaying) {
+        scrubberPosition = (scrubberPosition + 0.1) % 100;
+        scrubberProgress.style.width = scrubberPosition + '%';
+      }
+    }, 1000);
+    
+    // Scrubber click (visual only - real seeking would need YouTube API)
+    scrubber.addEventListener('click', function(e) {
+      const rect = scrubber.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width * 100;
+      scrubberPosition = percent;
+      scrubberProgress.style.width = percent + '%';
     });
   </script>
 </body>
