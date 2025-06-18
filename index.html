@@ -1,34 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>And The Stars Go With You</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        img {
-            max-width: 100vw;
-            max-height: 100vh;
-            width: auto;
-            height: auto;
-            display: block;
-            object-fit: contain;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>And The Stars Go With You</title>
+  <style>
+    /* ensure no unexpected gaps */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    /* allow the image to fill the width and fixed height */
+    img {
+      display: block;
+      width: 100vw;      /* full browser width */
+      height: 60vh;      /* 60% of viewport height */
+      object-fit: cover; /* crop/scale so it fills without distortion */
+    }
+  </style>
 </head>
 <body>
-    <img src="tau.4.webp" alt="And The Stars Go With You" />
+  <img src="tau.4.webp" alt="And The Stars Go With You" />
 </body>
 </html>
