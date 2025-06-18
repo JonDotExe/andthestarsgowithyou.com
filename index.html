@@ -5,19 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>And The Stars Go With You</title>
   <style>
+    /* reset and prevent horizontal scroll */
     html, body {
       margin: 0;
       padding: 0;
-      width: 100%;
-      height: 100%;
+      overflow-x: hidden;
     }
 
+    /* full-width, natural height, top-anchored */
     img {
       display: block;
       width: 100vw;
-      height: 100vh;
-      object-fit: cover;        /* fill the viewport */
-      object-position: top;     /* anchor to the top edge */
+      height: auto;        /* lets the image go past 100vh */
+      object-fit: none;     /* disable cover/crop behavior */
+      object-position: top; /* keep the top aligned */
     }
   </style>
 </head>
