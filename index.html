@@ -5,19 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>And The Stars Go With You</title>
   <style>
-    /* ensure no unexpected gaps */
+    /* reset any default margins/padding and force full‐height */
     html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
       height: 100%;
     }
 
-    /* allow the image to fill the width and fixed height */
+    /* make the image exactly the size of the viewport */
     img {
       display: block;
-      width: 100vw;      /* full browser width */
-      height: 60vh;      /* 60% of viewport height */
-      object-fit: cover; /* crop/scale so it fills without distortion */
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;  /* fills without distortion, cropping if needed */
+      object-position: center;
     }
   </style>
 </head>
