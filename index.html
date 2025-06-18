@@ -5,20 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>And The Stars Go With You</title>
   <style>
-    /* reset and prevent horizontal scroll */
+    /* 1. force a black background no matter OS light/dark mode */
     html, body {
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
+      background-color: #000;
+      overflow-x: hidden; /* avoid any horizontal scroll */
     }
 
-    /* full-width, natural height, top-anchored */
+    /* 2. responsive full-width image, height auto so you can scroll */
     img {
-      display: block;
-      width: 100vw;
-      height: auto;        /* lets the image go past 100vh */
-      object-fit: none;     /* disable cover/crop behavior */
-      object-position: top; /* keep the top aligned */
+      display: block;   /* remove inline whitespace */
+      width: 100%;      /* span the full viewport width */
+      height: auto;     /* preserve intrinsic aspect ratio */
+      object-position: top; /* anchor to top if it were ever cropped */
+      object-fit: none; /* disable cover/crop behavior */
     }
   </style>
 </head>
