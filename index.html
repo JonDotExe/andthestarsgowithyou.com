@@ -36,16 +36,13 @@
       text-transform: lowercase;
     }
     
-    /* Credit text in bottom right */
+    /* Credit text in audio controls */
     .credit {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(255, 255, 255, 0.5);
       font-style: italic;
       font-family: Arial, sans-serif;
-      font-size: 12px;
-      z-index: 100;
+      font-size: 10px;
+      text-align: right;
     }
     
     /* Audio controls at bottom */
@@ -97,6 +94,13 @@
     }
     
     .volume-control {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .volume-row {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -161,10 +165,7 @@
   <div class="play-pause-icon" id="playPauseIcon">⏸️</div>
   
   <!-- Instructions -->
-  <div class="instructions">space bar... to play 🛰️🎶</div>
-  
-  <!-- Credit -->
-  <div class="credit">inspired by jonn serrie</div>
+  <div class="instructions">tap, click, or space bar... to play 🛰️🎶</div>
   
   <!-- Audio Controls -->
   <div class="audio-controls">
@@ -173,10 +174,13 @@
       <div class="scrubber-progress" id="scrubberProgress"></div>
     </div>
     <div class="volume-control">
-      <span style="color: rgba(255, 255, 255, 0.6); font-size: 14px;">🔊</span>
-      <div class="volume-slider" id="volumeSlider">
-        <div class="volume-progress" id="volumeProgress"></div>
+      <div class="volume-row">
+        <span style="color: rgba(255, 255, 255, 0.6); font-size: 14px;">🔊</span>
+        <div class="volume-slider" id="volumeSlider">
+          <div class="volume-progress" id="volumeProgress"></div>
+        </div>
       </div>
+      <div class="credit">inspired by jonn serrie</div>
     </div>
   </div>
 
