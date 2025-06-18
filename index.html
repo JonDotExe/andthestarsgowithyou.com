@@ -31,6 +31,20 @@
       text-transform: lowercase;
       pointer-events: none;
     }
+
+
+/*  fixing credit */
+    .credit a {
+  color: inherit;        /* match the surrounding text color */
+  text-decoration: none; /* no underline or default link styles */
+  cursor: pointer;       /* still feels clickable */
+}
+
+.credit a:hover,
+.credit a:focus {
+  text-decoration: none; /* keep it the same even on hover/focus */
+}
+
     /* feedback icon */
     .play-pause-icon {
       position: fixed;
@@ -206,10 +220,9 @@
       </div>
     </div>
     <div class="credit">
-  <a href="https://www.google.com/search?q=jonn+serrie" target="_blank" rel="noopener noreferrer">
-    inspired by jonn serrie
-  </a>
+  inspired by <a href="https://www.google.com/search?q=jonn+serrie" target="_blank" rel="noopener noreferrer">jonn serrie</a>
 </div>
+
   </div>
 
   <!-- 1×1 in-viewport placeholder for YouTube -->
