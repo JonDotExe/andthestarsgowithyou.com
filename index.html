@@ -1,4 +1,18 @@
-<!DOCTYPE html>
+/* 1) Remove all default page gutters, force black background */
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow-x: hidden;   /* just in case */
+    }
+
+    /* 2) Fluid image: width spans container, height scales */
+    img {
+      display: block;
+      width: 100%;    /* exactly the container’s width */
+      height: auto;   /* preserve aspect ratio, allow vertical scroll */
+      max-width: 100%;/* guard against over-sizing */
+    }<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
