@@ -5,20 +5,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>And The Stars Go With You</title>
   <style>
-    /* reset + black background */
+    /* Remove all default page gutters, force black background */
     html, body {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       background: black;
       overflow-x: hidden;
       cursor: pointer;
+      position: relative;
     }
-    /* fluid image */
+    /* Fluid image: width spans container, height scales */
     img {
       display: block;
       width: 100%;
       height: auto;
+      max-width: 100%;
     }
-    /* instructions overlay */
+    /* Instructions in upper left */
     .instructions {
       position: fixed;
       top: 20px; left: 20px;
@@ -26,19 +29,33 @@
       font-style: italic;
       font-family: Arial, sans-serif;
       font-size: 14px;
-      z-index: 1000;
+      z-index: 100;
       text-transform: lowercase;
     }
-    /* bottom controls */
+    /* Play/Pause icon overlay */
+    .play-pause-icon {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px;
+      color: rgba(255,255,255,0.8);
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .play-pause-icon.show {
+      opacity: 1;
+    }
+    /* Audio controls at bottom */
     .audio-controls {
       position: fixed;
       bottom: 0; left: 0; right: 0;
       background: rgba(0,0,0,0.8);
       backdrop-filter: blur(10px);
-      padding: 10px 20px;
-      display: flex; align-items: center;
-      gap: 15px;
-      z-index: 1000;
+      padding: 15px 20px;
+      display: flex; align-items: center; gap: 15px;
+      z-index: 300;
       border-top: 1px solid rgba(255,255,255,0.1);
     }
     .audio-controls button {
@@ -49,7 +66,7 @@
       cursor: pointer;
       padding: 5px;
       border-radius: 3px;
-      transition: color .2s;
+      transition: color 0.2s ease;
     }
     .audio-controls button:hover {
       color: white;
@@ -67,7 +84,7 @@
       background: rgba(255,255,255,0.7);
       border-radius: 2px;
       width: 0%;
-      transition: width .1s;
+      transition: width 0.1s ease;
     }
     .volume-control {
       display: flex;
@@ -91,10 +108,11 @@
       margin-left: auto;
       color: rgba(255,255,255,0.5);
       font-style: italic;
-      font-size: 12px;
+      font-family: Arial, sans-serif;
+      font-size: 10px;
       pointer-events: none;
     }
-    /* tiny YT container */
+    /* Tiny in-viewport YouTube placeholder */
     #yt-player {
       position: fixed;
       bottom: 0; left: 0;
@@ -105,13 +123,11 @@
   </style>
 </head>
 <body>
-  <!-- your image -->
   <img src="tau.4.webp" alt="And The Stars Go With You">
 
-  <!-- instructions -->
-  <div class="instructions">tap, click, or space bar… to play 🛰️🎶</div>
+  <div class="play-pause-icon" id="playPauseIcon">⏸️</div>
+  <div class="instructions">tap, click, or space bar... to play 🛰️🎶</div>
 
-  <!-- controls -->
   <div class="audio-controls">
     <button id="playPauseBtn">⏸️</button>
     <div class="scrubber" id="scrubber">
@@ -126,13 +142,12 @@
     <div class="credit">inspired by jonn serrie</div>
   </div>
 
-  <!-- tiny in-viewport placeholder for YT -->
   <div id="yt-player"></div>
-
-  <!-- YouTube API -->
   <script src="https://www.youtube.com/iframe_api" async defer></script>
   <script>
-    let player, unlocked = false, scrubPos = 0, vol = 0.7;
+    let player, unlocked = false, isPlaying = false;
+    let scrubPos = 0, currentVolume = 0.7;
+    const icon        = document.getElementById('playPauseIcon');
     const btn         = document.getElementById('playPauseBtn');
     const inst        = document.querySelector('.instructions');
     const scrubber    = document.getElementById('scrubber');
@@ -140,81 +155,107 @@
     const vSlider     = document.getElementById('volumeSlider');
     const vProg       = document.getElementById('volumeProgress');
 
-    // called by YT API
-    function onYouTubeIframeAPIReady(){
-      if(unlocked) initPlayer();
+    function showFeedback(symbol) {
+      icon.textContent = symbol;
+      icon.classList.add('show');
+      setTimeout(() => icon.classList.remove('show'), 800);
     }
-    function initPlayer(){
+
+    function onYouTubeIframeAPIReady() {
+      if (unlocked) initPlayer();
+    }
+
+    function initPlayer() {
       player = new YT.Player('yt-player', {
         width: '1', height: '1',
         videoId: 'S4rtNdt5ZNY',
         playerVars: {
-          autoplay:1, loop:1, playlist:'S4rtNdt5ZNY',
-          controls:0, modestbranding:1, rel:0,
-          iv_load_policy:3, disablekb:1, playsinline:1
+          autoplay: 1,
+          loop: 1,
+          playlist: 'S4rtNdt5ZNY',
+          controls: 0,
+          showinfo: 0,
+          rel: 0,
+          modestbranding: 1,
+          iv_load_policy: 3,
+          disablekb: 1,
+          playsinline: 1
         },
-        events:{
-          onReady: e=>{
-            e.target.setVolume(vol*100);
+        events: {
+          onReady: e => {
+            e.target.setVolume(currentVolume * 100);
             e.target.playVideo();
-            updateBtn();
+            isPlaying = true;
+            btn.textContent = '⏸️';
+            showFeedback('⏸️');
           },
-          onStateChange: updateBtn
+          onStateChange: () => {
+            const state = player.getPlayerState();
+            btn.textContent = (state === YT.PlayerState.PLAYING) ? '⏸️' : '▶️';
+          }
         }
       });
     }
 
-    function unlock(){
-      if(unlocked) return;
+    function unlock() {
+      if (unlocked) return;
       unlocked = true;
       inst.style.display = 'none';
-      if(window.YT && YT.Player) initPlayer();
+      if (window.YT && YT.Player) initPlayer();
     }
 
-    function toggle(){
-      if(!unlocked){ unlock(); return; }
-      const st = player.getPlayerState();
-      if(st===YT.PlayerState.PLAYING){
+    function toggle() {
+      if (!unlocked) {
+        unlock();
+        return;
+      }
+      if (!player) return;
+      const state = player.getPlayerState();
+      if (state === YT.PlayerState.PLAYING) {
         player.pauseVideo();
+        isPlaying = false;
+        showFeedback('▶️');
       } else {
         player.playVideo();
+        isPlaying = true;
+        showFeedback('⏸️');
       }
     }
 
-    function updateBtn(){
-      if(!player) return;
-      const st = player.getPlayerState();
-      btn.textContent = (st===YT.PlayerState.PLAYING) ? '⏸️' : '▶️';
-    }
-
-    // simulate scrubber
-    setInterval(()=>{
-      if(unlocked && player && player.getPlayerState()===YT.PlayerState.PLAYING){
+    // Simulate scrubber progress
+    setInterval(() => {
+      if (unlocked && isPlaying) {
         scrubPos = (scrubPos + 0.5) % 100;
         prog.style.width = scrubPos + '%';
       }
     }, 500);
 
-    // event handlers
-    document.body.addEventListener('click', e=>{
-      if(!e.target.closest('.audio-controls')) toggle();
-    });
-    document.addEventListener('keydown', e=>{
-      if(e.code==='Space'){ e.preventDefault(); toggle(); }
-    });
-    btn.addEventListener('click', e=>{
-      e.stopPropagation(); toggle();
-    });
-    scrubber.addEventListener('click', e=>{
+    scrubber.addEventListener('click', e => {
       const r = scrubber.getBoundingClientRect();
-      const p = ((e.clientX - r.left)/r.width)*100;
-      scrubPos = p; prog.style.width = p + '%';
+      const pct = ((e.clientX - r.left) / r.width) * 100;
+      scrubPos = pct;
+      prog.style.width = pct + '%';
     });
-    vSlider.addEventListener('click', e=>{
+
+    vSlider.addEventListener('click', e => {
       const r = vSlider.getBoundingClientRect();
-      vol = Math.max(0, Math.min(1, (e.clientX - r.left)/r.width));
-      vProg.style.width = (vol*100) + '%';
-      if(player) player.setVolume(vol*100);
+      currentVolume = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+      vProg.style.width = (currentVolume * 100) + '%';
+      if (player) player.setVolume(currentVolume * 100);
+    });
+
+    document.body.addEventListener('click', e => {
+      if (!e.target.closest('.audio-controls')) toggle();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        toggle();
+      }
+    });
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      toggle();
     });
   </script>
 </body>
