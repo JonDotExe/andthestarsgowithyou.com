@@ -4,3 +4,4 @@ a little project inspired from the music of jonn serrie, which guided me through
 it's funny that scorpions were a thing we had to worry about. why were they everywhere?
 
 www.AndTheStarsGoWithYou.com
+ 
